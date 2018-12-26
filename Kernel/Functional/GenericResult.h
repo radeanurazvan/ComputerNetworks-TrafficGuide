@@ -66,7 +66,7 @@ T GenericResult<T>::GetValue() {
 template <class T>
 GenericResult<T>* GenericResult<T>::OnSuccess(std::function<void(T)> callback) {
     if(this->isValid) {
-        callback(this.value);
+        callback(this->value);
     }
 
     return this;

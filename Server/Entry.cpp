@@ -1,7 +1,7 @@
 #pragma once
-#include "Infrastructure/Server.h"
+
+#include "App/TrafficGuide.h"
 
 int main() {
-    auto server = new Server();
-    server->Listen(8080);
+    TrafficGuide::Run();
 }
