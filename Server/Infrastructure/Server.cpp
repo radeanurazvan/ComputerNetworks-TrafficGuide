@@ -77,12 +77,12 @@ Result* Server::Listen(GenericResult<int> *socketResult)
     return Result::Ok();
 }
 
-Server *Server::HandleConcurrentClientsUsing(std::function<void()> handler)
+Server *Server::HandleConcurrentClientsUsing(std::function<void(std::string)> handler)
 {
     this->concurrentHandler = handler;
     return this;
 }
 
-std::function<void()> Server::GetConcurrentHandler() {
+std::function<void(std::string)> Server::GetConcurrentHandler() {
     return this->concurrentHandler;
 }

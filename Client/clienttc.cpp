@@ -3,6 +3,8 @@
          
    Autor: Lenuta Alboaie  <adria@infoiasi.ro> (c)2009
 */
+#include <iostream>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -20,72 +22,63 @@ extern int errno;
 /* portul de conectare la server*/
 int port;
 
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-  int sd;			// descriptorul de socket
-  struct sockaddr_in server;	// structura folosita pentru conectare 
-  		// mesajul trimis
-  int nr=0;
-  char buf[10];
-
-  /* exista toate argumentele in linia de comanda? */
-  if (argc != 3)
-    {
-      printf ("Sintaxa: %s <adresa_server> <port>\n", argv[0]);
-      return -1;
-    }
+  int sd;                    // descriptorul de socket
+  struct sockaddr_in server; // structura folosita pentru conectare
+                             // mesajul trimis
 
   /* stabilim portul */
-  port = atoi (argv[2]);
+  port = 8080;
 
   /* cream socketul */
-  if ((sd = socket (AF_INET, SOCK_STREAM, 0)) == -1)
-    {
-      perror ("Eroare la socket().\n");
-      return errno;
-    }
+  if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+  {
+    perror("[client]Socket error.\n");
+    return errno;
+  }
 
   /* umplem structura folosita pentru realizarea conexiunii cu serverul */
   /* familia socket-ului */
   server.sin_family = AF_INET;
   /* adresa IP a serverului */
-  server.sin_addr.s_addr = inet_addr(argv[1]);
+  server.sin_addr.s_addr = inet_addr("127.0.0.1");
   /* portul de conectare */
-  server.sin_port = htons (port);
-  
+  server.sin_port = htons(port);
+
   /* ne conectam la server */
-  if (connect (sd, (struct sockaddr *) &server,sizeof (struct sockaddr)) == -1)
-    {
-      perror ("[client]Eroare la connect().\n");
-      return errno;
-    }
+  if (connect(sd, (struct sockaddr *)&server, sizeof(struct sockaddr)) == -1)
+  {
+    perror("[client]Connect error .\n");
+    return errno;
+  }
+  else
+  {
+    printf("[client]Connected\n");
+  }
 
-  /* citirea mesajului */
-  printf ("[client]Introduceti un numar: ");
-  fflush (stdout);
-  read (0, buf, sizeof(buf));
-  nr=atoi(buf);
-  //scanf("%d",&nr);
-  
-  printf("[client] Am citit %d\n",nr);
+  char mesaj[255];
+  std::cin.getline(mesaj, 255);
+  printf("[client] Sending message %s\n", mesaj);
+  if (write(sd, mesaj, 255) <= 0)
+  {
+    perror("[client] Write error.\n");
+    return errno;
+  } else {
+    printf("[client] Successfully written]\n");
+  }
 
-  /* trimiterea mesajului la server */
-  if (write (sd,&nr,sizeof(int)) <= 0)
-    {
-      perror ("[client]Eroare la write() spre server.\n");
-      return errno;
-    }
+  printf("[client] Awaiting response\n");
 
-  /* citirea raspunsului dat de server 
-     (apel blocant pina cind serverul raspunde) */
-  if (read (sd, &nr,sizeof(int)) < 0)
-    {
-      perror ("[client]Eroare la read() de la server.\n");
-      return errno;
-    }
-  /* afisam mesajul primit */
-  printf ("[client]Mesajul primit este: %d\n", nr);
+  char messageBack[255];
+  bzero(messageBack, sizeof(messageBack));
+  if (read(sd, messageBack, 255) < 0)
+  {
+    perror("[client] Server read error.\n");
+    return errno;
+  }
 
-  /* inchidem conexiunea, am terminat */
-  close (sd);
+  printf("[client] Received server response: %s\n", messageBack);
+
+  close(sd);
 }
