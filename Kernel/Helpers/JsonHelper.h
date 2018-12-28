@@ -1,5 +1,4 @@
 #pragma once
-#include <exception>
 #include <string>
 #include "../3rdParties/json/single_include/nlohmann/json.hpp"
 

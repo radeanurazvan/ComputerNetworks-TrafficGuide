@@ -18,7 +18,7 @@ class Response {
         Response();
         template <class T>
         static Response Ok(T content);
-        static Response BadRequest();
+        static Response BadRequest(std::string reason = "");
         static Response Unauthorized();
         int GetCode() const ;
         std::string GetBody() const;

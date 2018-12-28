@@ -6,6 +6,9 @@ g++ -g -I ../ -pthread -fpermissive      \
     ../Kernel/Identity/*                 \
     ../Kernel/Communication/*            \
     ../Kernel/Helpers/*                  \
-    Infrastructure/*                     \
     App/*                                \
+    Infrastructure/*                     \
+    Resources/Authentication/*           \
+    Resources/Common/*                   \
+    Scaffolding/*                        \
     Entry.cpp

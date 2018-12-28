@@ -9,8 +9,8 @@ Response::Response(int code, std::string body) {
     this->body = body;
 }
 
-Response Response::BadRequest() {
-    return Response(HttpCode::BadRequest, std::string(""));
+Response Response::BadRequest(std::string reason = "") {
+    return Response(HttpCode::BadRequest, std::string(reason));
 }
 
 Response Response::Unauthorized() {
