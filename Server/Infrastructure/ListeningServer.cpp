@@ -8,6 +8,7 @@
 #include "Server/Middlewares/ModelValidationMiddleware.h"
 #include "Server/Middlewares/AuthorizationMiddleware.h"
 
+#include "Server/Pipeline/RequestPipeline.h"
 #include "ListeningServer.h"
 
 #define MAX_REQUEST_SIZE 1024
@@ -17,27 +18,6 @@ ListeningServer::ListeningServer(Server* server, int socketDescriptor, int port)
     this->server = server;
     this->socket = socketDescriptor;
     this->port = port;
-}
-
-std::vector<Middleware*> ListeningServer::GetMiddlewares(int client) {
-    std::vector<Middleware*> middlewares;
-
-    middlewares.push_back(new ModelValidationMiddleware(client, this->server));
-    middlewares.push_back(new AuthorizationMiddleware(client, this->server));
-
-    return middlewares;
-}
-
-bool ListeningServer::PassesMiddlewares(int client, Request request) {
-    auto middlewares = this->GetMiddlewares(client);
-    for(auto middleware: middlewares) {
-        auto passedMiddleware = middleware->Invoke(request);
-        if(!passedMiddleware) {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 void ListeningServer::ConcurrentServe()
@@ -60,11 +40,21 @@ void ListeningServer::ConcurrentServe()
         printf("\n\n[server] New client\n");
 
         auto request = server->ReadFromClient(client);
-        if(!this->PassesMiddlewares(client, request)) {
-            continue;
-        }
+        auto finalizer = [&]() {
+            auto clientThread = std::thread(this->server->GetConcurrentHandler(), client, request);
+            clientThread.detach();
 
-        auto clientThread = std::thread(this->server->GetConcurrentHandler(), client, request);
-        clientThread.detach();
+            return Response::Delegated();
+        };
+
+        RequestPipeline pipeline = { 
+            new ModelValidationMiddleware(),
+            new AuthorizationMiddleware(client)
+        };
+        pipeline = pipeline
+            .ForClient(client)
+            .ForServer(this->server)
+            .WithFinalizer(finalizer);
+        pipeline.Run(request);
     }
 }

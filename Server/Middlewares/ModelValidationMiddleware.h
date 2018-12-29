@@ -3,13 +3,11 @@
 
 class ModelValidationMiddleware : public Middleware {
     public:
-        ModelValidationMiddleware(int clientSocket, Server* server) : Middleware(clientSocket, server) {} 
-        bool Invoke(Request request) {
+        Response Invoke(Request request, std::function<Response()> next) {
             if(!request.IsValid()){
-                this->WriteToClient(Response::BadRequest("Cannot deserialize request"));
-                return false;
+                return Response::BadRequest("Cannot deserialize request");
             }
 
-            return true;
+            return next();
         }
 };

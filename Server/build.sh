@@ -11,7 +11,8 @@ g++ -g -I ../ -pthread -fpermissive      \
     Domain/WorldMap/*                    \
     Infrastructure/Persistence/*         \
     Infrastructure/*.cpp                 \
-    Middlewares/*.cpp                    \
+    Middlewares/*                        \
+    Pipeline/*                           \
     Resources/Cars/Adapters/*            \
     Resources/Cars/Requests/*            \
     Resources/Cars/*.cpp                 \

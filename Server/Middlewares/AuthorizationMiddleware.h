@@ -21,30 +21,28 @@ class AuthorizationMiddleware : public Middleware {
             auto adapter = adapterOrFail->GetValue();
             return adapter->NeedsAuthorization();
         }
-
     public:
-        AuthorizationMiddleware(int clientSocket, Server* server): Middleware(clientSocket, server) {
-            this->client = clientSocket;
+        AuthorizationMiddleware(int client) : Middleware() {
+            this->client = client;
         }
-        bool Invoke(Request request) {
+        Response Invoke(Request request, std::function<Response()> next) {
             if(!this->RequestNeedsAuthorization(request)) {
-                return true;
+                return next();
             }
 
             auto tokenHeader = request.headers.find(TOKEN_KEY);
             if(tokenHeader == request.headers.end()) {
-                return false;
+                return Response::Unauthorized();
             }
 
             auto token = request.headers[TOKEN_KEY];
             auto clients = CarRepository::GetAll();
             for(auto client: clients) {
                 if(client->GetId().ToString() == token) {
-                    return true;
+                    return next();
                 }
             }
 
-            WriteToClient(Response::Unauthorized());
-            return false;
+            return Response::Unauthorized();
         } 
 };

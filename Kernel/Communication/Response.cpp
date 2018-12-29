@@ -10,11 +10,15 @@ Response::Response(int code, std::string body) {
 }
 
 Response Response::BadRequest(std::string reason = "") {
-    return Response(HttpCode::BadRequest, std::string(reason));
+    return Response(HttpCode::BadRequest, reason);
 }
 
 Response Response::Unauthorized() {
-    return Response(HttpCode::Unauhtorized, std::string(""));
+    return Response(HttpCode::Unauhtorized, "");
+}
+
+Response Response::Delegated() {
+    return Response(HttpCode::Delegated, "");
 }
 
 int Response::GetCode() const {
