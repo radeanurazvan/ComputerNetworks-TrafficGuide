@@ -4,8 +4,8 @@ ControllerResourceAdapter::ControllerResourceAdapter(std::function<Response(Reso
     this->controllerMethod = controllerMethod;
 }
 
-ControllerResourceAdapter* ControllerResourceAdapter::GuardedByAuthorization() {
-    this->needsAuthorization = true;
+ControllerResourceAdapter* ControllerResourceAdapter::NotGuardedByAuthorization() {
+    this->needsAuthorization = false;
 
     return this;
 }

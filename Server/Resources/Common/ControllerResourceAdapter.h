@@ -7,13 +7,13 @@
 
 class ControllerResourceAdapter {
     private:
-        bool needsAuthorization = false;
+        bool needsAuthorization = true;
         std::function<Response(ResourceRequest*)> controllerMethod;
     protected:
         ControllerResourceAdapter(std::function<Response(ResourceRequest*)> controllerMethod);
         virtual GenericResult<ResourceRequest*>* AdaptRequest(std::string request) = 0;
     public:
         GenericResult<Response>* GetResponse(std::string request);
-        ControllerResourceAdapter* GuardedByAuthorization();
+        ControllerResourceAdapter* NotGuardedByAuthorization();
         bool NeedsAuthorization();
 };

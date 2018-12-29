@@ -10,4 +10,15 @@
 class ServerResource {
     public:
         virtual std::map<std::string, ControllerResourceAdapter*> GetAdaptersMap() = 0;
+        template <class T>
+        Response ResponseFromResult(GenericResult<T>* result);
 };
+
+template <class T>
+Response ServerResource::ResponseFromResult(GenericResult<T>* result) {
+    if(!result->IsValid()) {
+        return Response::BadRequest(result->GetErrorMessage());
+    }
+
+    return Response::Ok<T>(result->GetValue());
+}

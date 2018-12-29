@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Kernel/Functional/GenericResult.h"
-#include "Server/Domain/Car.h"
+#include "Server/Domain/Car/Car.h"
 
 class CarRepository {
     private:

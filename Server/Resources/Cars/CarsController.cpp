@@ -4,7 +4,7 @@
 
 #include "Requests/CreateCarSessionCommand.h"
 
-#include "Server/Domain/Car.h"
+#include "Server/Domain/Car/Car.h"
 
 CarsController::CarsController(int clientSocket) {
     this->clientSocket = clientSocket;
@@ -12,23 +12,23 @@ CarsController::CarsController(int clientSocket) {
 
 Response CarsController::CreateCarSession(CreateCarSessionCommand* command) {
     auto carOrFail = Car::Create(command->socket, command->position, command->speed);
-    if(!carOrFail->IsValid()) {
-        return Response::BadRequest(carOrFail->GetErrorMessage());
-    }
+    auto carIdResult = carOrFail->Map<std::string>([](Car* car) {
+        return GenericResult<std::string>::Ok(car->GetId().ToString());
+    });
 
-    auto car = carOrFail->GetValue();
-    return Response::Ok<std::string>(car->GetId().ToString());
+    return this->ResponseFromResult(carIdResult);
 }
 
 std::map<std::string, ControllerResourceAdapter*> CarsController::GetAdaptersMap() {
     std::map<std::string, ControllerResourceAdapter*> adaptersMap;
 
-    adaptersMap["createSession"] = new CreateCarSessionCommandAdapter([&](ResourceRequest* request) {
+    auto createCarSessionAdapter = new CreateCarSessionCommandAdapter([&](ResourceRequest* request) {
         auto command = (CreateCarSessionCommand*)request;
         command->socket = this->clientSocket;
 
         return this->CreateCarSession(command);
     });
+    adaptersMap["createSession"] = createCarSessionAdapter->NotGuardedByAuthorization();
 
     return adaptersMap;
 }

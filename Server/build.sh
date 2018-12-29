@@ -7,7 +7,8 @@ g++ -g -I ../ -pthread -fpermissive      \
     ../Kernel/Communication/*            \
     ../Kernel/Helpers/*                  \
     App/*                                \
-    Domain/*.cpp                         \
+    Domain/Car/*                         \
+    Domain/WorldMap/*                    \
     Infrastructure/Persistence/*         \
     Infrastructure/*.cpp                 \
     Middlewares/*.cpp                    \
