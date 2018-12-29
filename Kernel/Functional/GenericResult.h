@@ -39,7 +39,7 @@ GenericResult<T>* GenericResult<T>::Ok(T value) {
 
 template <class T>
 GenericResult<T>* GenericResult<T>::Fail(const char* errorMessage) {
-    return new GenericResult<T>(NULL, false, errorMessage);
+    return new GenericResult<T>(T(), false, errorMessage);
 }
 
 template <class T>

@@ -11,5 +11,5 @@ class ServerScaffolder {
         std::map<std::string, ServerResource*> GetServerResourcesMap();
         GenericResult<ServerResource*>* ControllerFor(std::string controller);
     public:
-        GenericResult<std::function<Response(ResourceRequest*)>>* MethodForRequest(ScaffoldingRequest request);
+        GenericResult<ControllerResourceAdapter*>* MethodAdapterForRequest(ScaffoldingRequest request);
 };

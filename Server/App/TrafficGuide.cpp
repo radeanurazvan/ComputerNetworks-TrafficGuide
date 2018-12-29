@@ -2,7 +2,6 @@
 #include "Server/Infrastructure/ListeningServer.h"
 #include "Server/Infrastructure/ListenOptions.h"
 
-#include "Server/Resources/Authentication/AuthenticationController.h"
 #include "Server/Scaffolding/ScaffoldingRequest.h"
 #include "Server/Scaffolding/ServerScaffolder.h"
 
@@ -23,15 +22,21 @@ void TrafficGuide::Run()
 
             printf("[server] Identified controller %s and method %s \n", scaffoldingRequest->GetController().c_str(), scaffoldingRequest->GetMethod().c_str());
 
-            auto methodOrFail = serverScaffolder->MethodForRequest(*scaffoldingRequest);
+            auto adapterOrFail = serverScaffolder->MethodAdapterForRequest(*scaffoldingRequest);
             
-            methodOrFail
-                ->OnSuccess([clientSocket, server](std::function<Response(ResourceRequest*)> method) {
-                    auto response = method(new ResourceRequest());
-                    server->WriteToClient(clientSocket, response);
+            adapterOrFail
+                ->OnSuccess([clientSocket, clientRequest, server](ControllerResourceAdapter* adapter) {
+                    auto responseOrFail = adapter->GetResponse(clientRequest.body);
+                    responseOrFail
+                        ->OnSuccess([&](Response response) {
+                            server->WriteToClient(clientSocket, response);
+                        })
+                        ->OnFail([clientSocket, server, responseOrFail]() {
+                            server->WriteToClient(clientSocket, Response::BadRequest(responseOrFail->GetErrorMessage()));
+                        });
                 })
-                ->OnFail([clientSocket, server, methodOrFail]() {
-                    server->WriteToClient(clientSocket, Response::BadRequest(methodOrFail->GetErrorMessage()));
+                ->OnFail([clientSocket, server, adapterOrFail]() {
+                    server->WriteToClient(clientSocket, Response::BadRequest(adapterOrFail->GetErrorMessage()));
                 });
         })
         ->Listen(8080)

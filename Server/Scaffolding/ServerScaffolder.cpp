@@ -1,11 +1,10 @@
 #include "ServerScaffolder.h"
-
-#include "Server/Resources/Authentication/AuthenticationController.h"
+#include "Server/Resources/Cars/CarsController.h"
 
 std::map<std::string, ServerResource*> ServerScaffolder::GetServerResourcesMap() {
     std::map<std::string, ServerResource*> resourcesMap;
 
-    resourcesMap["authenticate"] = new AuthenticationController;
+    resourcesMap["cars"] = new CarsController();
 
     return resourcesMap;
 }
@@ -20,18 +19,19 @@ GenericResult<ServerResource*>* ServerScaffolder::ControllerFor(std::string cont
     return GenericResult<ServerResource*>::Ok(serverResourcesMap[controller]);
 }
 
-GenericResult<std::function<Response(ResourceRequest*)>>* ServerScaffolder::MethodForRequest(ScaffoldingRequest request) {
+GenericResult<ControllerResourceAdapter*>* ServerScaffolder::MethodAdapterForRequest(ScaffoldingRequest request) {
     auto controllerResult = this->ControllerFor(request.GetController());
     auto method = request.GetMethod();
 
-    return controllerResult->Map<std::function<Response(ResourceRequest*)>>([&method](ServerResource* controller) {
-        auto controllerResourceMap = controller->GetResourceMap();
-        auto methodInMap = controllerResourceMap.find(method);
+    return controllerResult->Map<ControllerResourceAdapter*>([&method](ServerResource* controller) {
+        auto controllerAdaptersMap = controller->GetAdaptersMap();
+        auto adapterInMap = controllerAdaptersMap.find(method);
 
-        if(methodInMap == controllerResourceMap.end()) {
-            return GenericResult<std::function<Response(ResourceRequest*)>>::Fail("Method not found");
+        if(adapterInMap == controllerAdaptersMap.end()) {
+            return GenericResult<ControllerResourceAdapter*>::Fail("Method not found");
         }
 
-        return GenericResult<std::function<Response(ResourceRequest*)>>::Ok(controllerResourceMap[method]);
+        auto adapter = controllerAdaptersMap[method];
+        return GenericResult<ControllerResourceAdapter*>::Ok(adapter);
     });
 }

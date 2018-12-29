@@ -1,5 +1,9 @@
 #include "Guid.h"
 
+Guid::Guid() {
+    this->uuid = "00000000-0000-0000-0000-000000000000";
+}
+
 Guid::Guid(std::string string)
 {
     this->uuid = string;
@@ -32,6 +36,10 @@ Guid Guid::NewGuid()
         }
     }
     return uuid;
+}
+
+Guid Guid::EmptyGuid() {
+    return Guid();
 }
 
 std::string Guid::ToString() {

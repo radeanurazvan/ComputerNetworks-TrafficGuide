@@ -7,8 +7,12 @@ g++ -g -I ../ -pthread -fpermissive      \
     ../Kernel/Communication/*            \
     ../Kernel/Helpers/*                  \
     App/*                                \
-    Infrastructure/*                     \
-    Resources/Authentication/*           \
+    Domain/*.cpp                         \
+    Infrastructure/Persistence/*         \
+    Infrastructure/*.cpp                 \
+    Resources/Cars/Adapters/*            \
+    Resources/Cars/Requests/*            \
+    Resources/Cars/*.cpp                 \
     Resources/Common/*                   \
     Scaffolding/*                        \
     Entry.cpp
