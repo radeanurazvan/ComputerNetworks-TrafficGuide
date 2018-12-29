@@ -6,8 +6,12 @@
 
 #include "Server/Domain/Car.h"
 
+CarsController::CarsController(int clientSocket) {
+    this->clientSocket = clientSocket;
+}
+
 Response CarsController::CreateCarSession(CreateCarSessionCommand* command) {
-    auto carOrFail = Car::Create(command->position, command->speed);
+    auto carOrFail = Car::Create(command->socket, command->position, command->speed);
     if(!carOrFail->IsValid()) {
         return Response::BadRequest(carOrFail->GetErrorMessage());
     }
@@ -21,6 +25,8 @@ std::map<std::string, ControllerResourceAdapter*> CarsController::GetAdaptersMap
 
     adaptersMap["createSession"] = new CreateCarSessionCommandAdapter([&](ResourceRequest* request) {
         auto command = (CreateCarSessionCommand*)request;
+        command->socket = this->clientSocket;
+
         return this->CreateCarSession(command);
     });
 

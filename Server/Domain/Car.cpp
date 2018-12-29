@@ -1,18 +1,19 @@
 #include "Car.h"
 
-Car::Car(int position, double speed) {
+Car::Car(int socket, int position, double speed) {
     this->id = Guid::NewGuid();
 
+    this->socket = socket;
     this->position = position;
     this->speed = speed;
 }
 
-GenericResult<Car*>* Car::Create(int position, double speed) {
+GenericResult<Car*>* Car::Create(int socket, int position, double speed) {
     if(position<0 || speed<0) {
         return GenericResult<Car*>::Fail("Bad car info");
     }
 
-    return GenericResult<Car*>::Ok(new Car(position, speed));
+    return GenericResult<Car*>::Ok(new Car(socket, position, speed));
 }
 
 Guid Car::GetId() {

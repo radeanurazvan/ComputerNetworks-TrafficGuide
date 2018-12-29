@@ -10,6 +10,7 @@ g++ -g -I ../ -pthread -fpermissive      \
     Domain/*.cpp                         \
     Infrastructure/Persistence/*         \
     Infrastructure/*.cpp                 \
+    Middlewares/*.cpp                    \
     Resources/Cars/Adapters/*            \
     Resources/Cars/Requests/*            \
     Resources/Cars/*.cpp                 \

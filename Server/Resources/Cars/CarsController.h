@@ -7,7 +7,9 @@
 
 class CarsController : public ServerResource {
     private:
+        int clientSocket;
         Response CreateCarSession(CreateCarSessionCommand* command);
     public:
+        CarsController(int clientSocket);
         std::map<std::string, ControllerResourceAdapter*> GetAdaptersMap();
 };

@@ -4,12 +4,13 @@
 
 class Car {
     private:
-        Car(int position, double speed);
+        Car(int socket, int position, double speed);
         Guid id;
+        int socket;
         int position;
         double speed;
     public:
-        static GenericResult<Car*>* Create(int position, double speed);
+        static GenericResult<Car*>* Create(int socket, int position, double speed);
         Guid GetId();
         int GetPosition();
         double GetSpeed();

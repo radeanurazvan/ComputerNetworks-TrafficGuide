@@ -4,6 +4,7 @@
 
 class CreateCarSessionCommand : public ResourceRequest{
     public:
+        int socket;
         int position;
         double speed;
 };

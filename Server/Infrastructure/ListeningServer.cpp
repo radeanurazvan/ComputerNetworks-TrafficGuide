@@ -5,6 +5,8 @@
 #include "string.h"
 
 #include "Kernel/Helpers/JsonHelper.h"
+#include "Server/Middlewares/ModelValidationMiddleware.h"
+#include "Server/Middlewares/AuthorizationMiddleware.h"
 
 #include "ListeningServer.h"
 
@@ -15,6 +17,27 @@ ListeningServer::ListeningServer(Server* server, int socketDescriptor, int port)
     this->server = server;
     this->socket = socketDescriptor;
     this->port = port;
+}
+
+std::vector<Middleware*> ListeningServer::GetMiddlewares(int client) {
+    std::vector<Middleware*> middlewares;
+
+    middlewares.push_back(new ModelValidationMiddleware(client, this->server));
+    middlewares.push_back(new AuthorizationMiddleware(client, this->server));
+
+    return middlewares;
+}
+
+bool ListeningServer::PassesMiddlewares(int client, Request request) {
+    auto middlewares = this->GetMiddlewares(client);
+    for(auto middleware: middlewares) {
+        auto passedMiddleware = middleware->Invoke(request);
+        if(!passedMiddleware) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void ListeningServer::ConcurrentServe()
@@ -34,14 +57,13 @@ void ListeningServer::ConcurrentServe()
             perror("[server] Server accept error.\n");
             continue;
         }
-
         printf("\n\n[server] New client\n");
+
         auto request = server->ReadFromClient(client);
-        if(!request.IsValid()){
-            server->WriteToClient(client, Response::BadRequest());
+        if(!this->PassesMiddlewares(client, request)) {
             continue;
         }
-        
+
         auto clientThread = std::thread(this->server->GetConcurrentHandler(), client, request);
         clientThread.detach();
     }

@@ -14,7 +14,7 @@ void TrafficGuide::Run()
     auto server = new Server();
     server
         ->HandleConcurrentClientsUsing([server](int clientSocket, Request clientRequest) {
-            auto serverScaffolder = new ServerScaffolder();
+            auto serverScaffolder = new ServerScaffolder(clientSocket);
 
             printf("[server] Handling starting\n");
 

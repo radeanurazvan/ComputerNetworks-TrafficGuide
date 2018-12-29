@@ -2,6 +2,10 @@
 
 std::vector<Car*> CarRepository::cars;
 
+std::vector<Car*> CarRepository::GetAll() {
+    return cars;
+}
+
 GenericResult<Car*>* CarRepository::GetById(Guid id) {
     for(auto car : cars) {
         if(car->GetId() == id) {

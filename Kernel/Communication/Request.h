@@ -7,6 +7,7 @@ class Request {
         bool isValid = true;
     public:
         Request();
+        std::map<std::string, std::string> headers;
         std::string resource;
         std::string body;
         static Request FromJson(std::string json);

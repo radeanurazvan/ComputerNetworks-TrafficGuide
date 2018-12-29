@@ -24,6 +24,7 @@ bool Request::IsValid() {
 }
 
 void from_json(const nlohmann::json& json, Request& request) {
+    request.headers = json.at("headers").get<std::map<std::string, std::string>>();
     request.body = json.at("body").get<std::string>();
     request.resource = json.at("resource").get<std::string>();
 }

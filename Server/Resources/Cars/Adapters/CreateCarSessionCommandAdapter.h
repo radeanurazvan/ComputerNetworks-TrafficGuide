@@ -15,5 +15,6 @@ class CreateCarSessionCommandAdapter : public ControllerResourceAdapter {
             return GenericResult<ResourceRequest*>::Ok(&command);
         }
     public:
-        CreateCarSessionCommandAdapter(std::function<Response(ResourceRequest*)> controllerMethod) : ControllerResourceAdapter(controllerMethod) {}
+        CreateCarSessionCommandAdapter(std::function<Response(ResourceRequest*)> controllerMethod) : ControllerResourceAdapter(controllerMethod) {
+        }
 };

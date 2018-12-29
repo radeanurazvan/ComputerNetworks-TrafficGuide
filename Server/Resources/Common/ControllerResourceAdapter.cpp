@@ -4,6 +4,16 @@ ControllerResourceAdapter::ControllerResourceAdapter(std::function<Response(Reso
     this->controllerMethod = controllerMethod;
 }
 
+ControllerResourceAdapter* ControllerResourceAdapter::GuardedByAuthorization() {
+    this->needsAuthorization = true;
+
+    return this;
+}
+
+bool ControllerResourceAdapter::NeedsAuthorization() {
+    return this->needsAuthorization;
+}
+
 GenericResult<Response>* ControllerResourceAdapter::GetResponse(std::string request) {
     auto resourceRequestOrFail = this->AdaptRequest(request);
     
