@@ -13,7 +13,6 @@ g++ -g -I ../ -pthread -fpermissive      \
     Infrastructure/*.cpp                 \
     Middlewares/*                        \
     Pipeline/*                           \
-    Resources/Cars/Adapters/*            \
     Resources/Cars/Requests/*            \
     Resources/Cars/*.cpp                 \
     Resources/Common/*                   \

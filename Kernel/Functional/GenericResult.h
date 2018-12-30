@@ -22,6 +22,7 @@ class GenericResult {
         GenericResult<T>* OnBoth(std::function<void()> callback);
         template <class K>
         GenericResult<K>* Map(std::function<GenericResult<K>*(T)> mapFn);
+        Result* Map(std::function<Result*(T)> mapFn);
         Result* ToSampleResult();
 };
 
@@ -104,6 +105,15 @@ template <class K>
 GenericResult<K>* GenericResult<T>::Map(std::function<GenericResult<K>*(T)> mapFn) {
     if(!this->IsValid()) {
         return GenericResult<K>::Fail(this->GetErrorMessage());
+    }
+
+    return mapFn(this->GetValue());
+}
+
+template <class T>
+Result* GenericResult<T>::Map(std::function<Result*(T)> mapFn) {
+    if(!this->IsValid()) {
+        return Result::Fail(this->GetErrorMessage());
     }
 
     return mapFn(this->GetValue());

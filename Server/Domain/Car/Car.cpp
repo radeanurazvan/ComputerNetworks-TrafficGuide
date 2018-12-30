@@ -16,6 +16,17 @@ GenericResult<Car*>* Car::Create(int socket, int position, double speed) {
     return GenericResult<Car*>::Ok(new Car(socket, position, speed));
 }
 
+Result* Car::Update(int position, double speed) {
+    if(position<0 || speed<0) {
+        return Result::Fail("Bad car info");
+    }
+
+    this->position = position;
+    this->speed = speed;
+
+    return Result::Ok();
+}
+
 Guid Car::GetId() {
     return this->id;
 }

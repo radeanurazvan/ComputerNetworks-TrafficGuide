@@ -1,5 +1,6 @@
 #pragma once
 #include "Kernel/Identity/Guid.h"
+#include "Kernel/Functional/Result.h"
 #include "Kernel/Functional/GenericResult.h"
 
 class Car {
@@ -14,4 +15,5 @@ class Car {
         Guid GetId();
         int GetPosition();
         double GetSpeed();
+        Result* Update(int position, double speed);
 };

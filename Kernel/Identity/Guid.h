@@ -4,8 +4,8 @@
 class Guid {
     private:
         std::string uuid;
-        Guid(std::string string);
     public:
+        Guid(std::string string);
         Guid();
         static Guid NewGuid();
         static Guid EmptyGuid();
