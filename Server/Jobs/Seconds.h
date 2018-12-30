@@ -7,4 +7,4 @@ class Seconds {
         static int FromMinutes(int minutes) {
             return minutes * 60;
         }
-}
+};

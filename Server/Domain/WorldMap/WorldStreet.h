@@ -14,4 +14,5 @@ class WorldStreet {
     public:
         static GenericResult<WorldStreet*>* Create(int start, int end, std::string name);
         bool ContainsPosition(int position);
+        std::string GetName();
 };

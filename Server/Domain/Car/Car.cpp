@@ -1,4 +1,5 @@
 #include "Car.h"
+#define CAR_CRASH_DISTANCE_ERROR 50
 
 Car::Car(int socket, int position, double speed) {
     this->id = Guid::NewGuid();
@@ -62,4 +63,11 @@ bool Car::IsInterestedIn(NewsMessage* message) {
     }
 
     return false;
+}
+
+bool Car::IsCloseTo(WorldCarCrash* crash) {
+    auto crashStart = crash->GetPosition() - CAR_CRASH_DISTANCE_ERROR;
+    auto crashEnd = crash->GetPosition() + CAR_CRASH_DISTANCE_ERROR;
+
+    return crashStart <= this->GetPosition() && crashEnd >= this->GetPosition();
 }

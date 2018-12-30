@@ -6,6 +6,7 @@
 #include "Server/Resources/Common/ConcreteControllerResourceAdapter.h"
 #include "Server/Events/DomainEvents.h"
 #include "Server/Domain/Car/Car.h"
+#include "Server/Domain/Car/Events/CarCrashReportedEvent.h"
 #include "Server/Domain/WorldMap/WorldMap.h"
 
 CarsController::CarsController(int clientSocket) {
@@ -40,6 +41,16 @@ Response CarsController::UpdateCar(UpdateCarCommand* command) {
     return this->ResponseFromResult(limitFeedbackResult, NotFound);
 }
 
+Response CarsController::ReportCrash(ReportCrashCommand* command) {
+    auto carOrNothing = CarRepository::GetById(Guid(command->carId));
+    auto result = carOrNothing->OnSuccess([](Car* car) {
+        auto crash = WorldMap::CrashAt(car->GetPosition());
+        DomainEvents::Publish<CarCrashReportedEvent>(new CarCrashReportedEvent(crash));
+    })->ToSampleResult();
+
+    return ResponseFromResult(result, NotFound);
+}
+
 std::map<std::string, ControllerResourceAdapter*> CarsController::GetAdaptersMap() {
     std::map<std::string, ControllerResourceAdapter*> adaptersMap;
 
@@ -54,9 +65,14 @@ std::map<std::string, ControllerResourceAdapter*> CarsController::GetAdaptersMap
 
         return this->UpdateCar(command);
     });
+    auto reportCrashAdapter = new ConcreteControllerResourceAdapter<ReportCrashCommand>([&](ResourceRequest* request) {
+        auto command = (ReportCrashCommand*)request;
+        return this->ReportCrash(command);
+    });
 
     adaptersMap["createSession"] = createCarSessionAdapter->NotGuardedByAuthorization();
     adaptersMap["update"] = updateCarAdapter;
+    adaptersMap["reportCrash"] = reportCrashAdapter;
 
     return adaptersMap;
 }

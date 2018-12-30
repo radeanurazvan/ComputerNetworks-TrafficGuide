@@ -13,3 +13,11 @@ GenericResult<WorldStreet*>* WorldStreet::Create(int start, int end, std::string
 
     return GenericResult<WorldStreet*>::Ok(new WorldStreet(start, end, name));
 }
+
+bool WorldStreet::ContainsPosition(int position) {
+    return this->streetStart <= position && this->streetEnd >= position;
+}
+
+std::string WorldStreet::GetName() {
+    return this->name;
+}

@@ -6,6 +6,18 @@ std::vector<Car*> CarRepository::GetAll() {
     return cars;
 }
 
+std::vector<Car*> CarRepository::Find(std::function<bool(Car*)> eval) {
+    std::vector<Car*> result;
+
+    for(auto car: cars) {
+        if(eval(car)) {
+            result.push_back(car);
+        }
+    }
+
+    return result;
+}
+
 GenericResult<Car*>* CarRepository::GetById(Guid id) {
     for(auto car : cars) {
         if(car->GetId() == id) {

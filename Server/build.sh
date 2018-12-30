@@ -7,6 +7,7 @@ g++ -g -I ../ -pthread -fpermissive      \
     ../Kernel/Communication/*            \
     ../Kernel/Helpers/*                  \
     App/*                                \
+    Domain/Car/EventHandlers/*           \
     Domain/Car/Events/*                  \
     Domain/Car/*.cpp                     \
     Domain/WorldMap/*                    \

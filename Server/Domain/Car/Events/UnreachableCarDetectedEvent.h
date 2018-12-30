@@ -3,9 +3,13 @@
 #include "Server/Events/DomainEvent.h"
 
 class UnreachableCarDetectedEvent : public DomainEvent {
-    public:
+    private:
         int client;
+    public:
         UnreachableCarDetectedEvent(int client) {
             this->client = client;
+        }
+        int GetClient() {
+            return this->client;
         }
 };

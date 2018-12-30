@@ -5,6 +5,7 @@
 
 #include "../News/NewsSubscription.h"
 #include "../News/NewsMessage.h"
+#include "../WorldMap/WorldCarCrash.h"
 
 class Car {
     private:
@@ -24,4 +25,5 @@ class Car {
         Result* Update(int position, double speed);
         Result* SubscribeTo(NewsType type);
         bool IsInterestedIn(NewsMessage* message);
+        bool IsCloseTo(WorldCarCrash* crash);
 };

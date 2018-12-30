@@ -2,6 +2,8 @@
 
 WorldMap::WorldMap(){}
 
+std::vector<WorldCarCrash*> WorldMap::carCrashes;
+
 std::vector<WorldStreet*> WorldMap::streets = {
     WorldStreet::Create(0, 106, "Strada Pacurari")->GetValue(),
     WorldStreet::Create(106, 115, "Pasaj Octav Bancila")->GetValue(),
@@ -72,4 +74,21 @@ GenericResult<std::string>* WorldMap::LimitFeedbackFor(Car* car) {
         
         return GenericResult<std::string>::Ok(std::string(message));
     });
+}
+
+WorldCarCrash* WorldMap::CrashAt(int position) {
+    auto crash = WorldCarCrash::Create(position);
+    carCrashes.push_back(crash);
+
+    return crash;
+}
+
+GenericResult<WorldStreet*>* WorldMap::StreetAt(int position) {
+    for(auto street: streets) {
+        if(street->ContainsPosition(position)){
+            return GenericResult<WorldStreet*>::Ok(street);
+        }
+    }
+
+    return GenericResult<WorldStreet*>::Fail("No street found for given position");
 }
