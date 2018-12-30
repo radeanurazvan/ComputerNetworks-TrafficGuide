@@ -80,27 +80,40 @@ Result* Server::Listen(GenericResult<int> *socketResult)
     return Result::Ok();
 }
 
-Server *Server::HandleConcurrentClientsUsing(std::function<void(int, Request)> handler)
+Server *Server::HandleConcurrentClientsUsing(std::function<Response(int, Request)> handler)
 {
     this->concurrentHandler = handler;
     return this;
 }
 
-std::function<void(int, Request)> Server::GetConcurrentHandler() {
+std::function<Response(int, Request)> Server::GetConcurrentHandler() {
     return this->concurrentHandler;
 }
 
-Request Server::ReadFromClient(int clientSocket) {
+GenericResult<Request>* Server::ReadFromClient(int clientSocket) {
     char* buffer = (char*)malloc(MAX_REQUEST_SIZE * sizeof(char));
-    read(clientSocket, buffer, MAX_REQUEST_SIZE);
+    auto readBytes = read(clientSocket, buffer, MAX_REQUEST_SIZE);
     
-    printf("[server] Read from client: %s\n", buffer);
-    return Request::FromJson(buffer);
+    if(readBytes <= 0) {
+        return GenericResult<Request>::Fail("Unreachable socket");
+    }
+
+    printf("[server] Read from client %d bytes: %s\n", strlen(buffer), buffer);
+    return GenericResult<Request>::Ok(Request::FromJson(buffer));
 }
 
-void Server::WriteToClient(int clientSocket, Response message) {
+Result* Server::WriteToClient(int clientSocket, Response message) {
     auto serializedMessage = JsonHelper::Serialize<Response>(message);
-    write(clientSocket, serializedMessage.c_str(), serializedMessage.size());
+    auto writtenBytes = write(clientSocket, serializedMessage.c_str(), serializedMessage.size());
 
-    printf("[server] Wrote to client: %s\n", serializedMessage.c_str());
+    if(writtenBytes < 0) {
+        return Result::Fail("Unreachable socket");
+    }
+
+    printf("[server] Wrote to client %d: %s\n", clientSocket, serializedMessage.c_str());
+    return Result::Ok();
+}
+
+void Server::CloseSocket(int socket) {
+    close(socket);
 }

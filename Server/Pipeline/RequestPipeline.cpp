@@ -1,5 +1,9 @@
+#include "Server/Events/DomainEvents.h"
+
 #include "RequestPipeline.h"
 #include "MiddlewareInPipeline.h"
+
+#include "Server/Domain/Car/Events/UnreachableCarDetectedEvent.h"
 
 RequestPipeline::RequestPipeline(std::initializer_list<Middleware *> middlewares)
 {
@@ -46,8 +50,9 @@ void RequestPipeline::Run(Request request)
 
     auto firstMiddleware = middlewaresInPipeline[0];
     auto response = firstMiddleware->Invoke(request);
-    
-    if(response.GetCode() != Delegated) {
-        Server::WriteToClient(this->client, response);
-    }
+
+    Server::WriteToClient(this->client, response)->OnFail([this]() {
+        Server::CloseSocket(this->client);
+        DomainEvents::Publish<UnreachableCarDetectedEvent>(new UnreachableCarDetectedEvent(this->client));
+    });
 }

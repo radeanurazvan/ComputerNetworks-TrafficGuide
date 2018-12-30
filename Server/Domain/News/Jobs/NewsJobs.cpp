@@ -1,6 +1,7 @@
 #include "time.h"
 #include "NewsJobs.h"
 
+#include "Server/Jobs/Seconds.h"
 #include "Server/Jobs/RecurrentJobs.h"
 #include "Server/Infrastructure/Server.h"
 #include "Server/Infrastructure/Persistence/NewsRepository.h"
@@ -24,5 +25,5 @@ void NewsJobs::Setup() {
                 }
             }
         }
-    }, 10);
+    }, Seconds::FromMinutes(5));
 }

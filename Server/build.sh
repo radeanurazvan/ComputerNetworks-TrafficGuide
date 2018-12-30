@@ -7,13 +7,15 @@ g++ -g -I ../ -pthread -fpermissive      \
     ../Kernel/Communication/*            \
     ../Kernel/Helpers/*                  \
     App/*                                \
-    Domain/Car/*                         \
+    Domain/Car/Events/*                  \
+    Domain/Car/*.cpp                     \
     Domain/WorldMap/*                    \
     Domain/News/Jobs/*                   \
     Domain/News/*.cpp                    \
+    Events/*                             \
     Infrastructure/Persistence/*         \
     Infrastructure/*.cpp                 \
-    Jobs/*                        \
+    Jobs/*                               \
     Middlewares/*                        \
     Pipeline/*                           \
     Resources/Cars/Requests/*            \

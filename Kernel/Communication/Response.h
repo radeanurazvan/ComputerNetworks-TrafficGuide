@@ -8,8 +8,7 @@ enum HttpCode {
     BadRequest = 400,
     Unauhtorized = 401,
     NotFound = 404,
-    Delegated = -1,
-    Notification = -2
+    Notification = -1
 };
 
 class Response {
@@ -23,7 +22,6 @@ class Response {
         static Response Ok(T content);
         static Response BadRequest(std::string reason = "");
         static Response Unauthorized();
-        static Response Delegated();
         static Response Custom(std::string body, int code);
         static Response Notification(std::string body);
         int GetCode() const ;

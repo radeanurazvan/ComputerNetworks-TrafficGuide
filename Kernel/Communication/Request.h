@@ -4,6 +4,7 @@
 
 class Request {
     private:
+        static Request InvalidRequest();
         bool isValid = true;
     public:
         Request();

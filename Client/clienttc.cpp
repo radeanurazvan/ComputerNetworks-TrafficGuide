@@ -64,7 +64,9 @@ int main(int argc, char *argv[])
   {
     perror("[client] Write error.\n");
     return errno;
-  } else {
+  }
+  else
+  {
     printf("[client] Successfully written]\n");
   }
 
@@ -79,6 +81,43 @@ int main(int argc, char *argv[])
   }
 
   printf("[client] Received server response: %s\n", messageBack);
+
+  std::cin.getline(mesaj, 255);
+  printf("[client] Sending message %s\n", mesaj);
+  if (write(sd, mesaj, 255) <= 0)
+  {
+    perror("[client] Write error.\n");
+    return errno;
+  }
+  else
+  {
+    printf("[client] Successfully written]\n");
+  }
+
+  printf("[client] Awaiting response\n");
+
+  bzero(messageBack, sizeof(messageBack));
+  if (read(sd, messageBack, 255) < 0)
+  {
+    perror("[client] Server read error.\n");
+    return errno;
+  }
+
+  printf("[client] Received server response: %s\n", messageBack);
+
+  while (true)
+  {
+    printf("[client] Awaiting response\n");
+
+    bzero(messageBack, sizeof(messageBack));
+    if (read(sd, messageBack, 255) < 0)
+    {
+      perror("[client] Server read error.\n");
+      return errno;
+    }
+
+    printf("[client] Received server response: %s\n", messageBack);
+  }
 
   close(sd);
 }

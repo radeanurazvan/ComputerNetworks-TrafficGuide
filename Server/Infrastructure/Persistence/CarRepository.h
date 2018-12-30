@@ -12,4 +12,5 @@ class CarRepository {
         static GenericResult<Car*>* GetById(Guid id);
         static void Add(Car* car);
         static void Delete(Guid id);
+        static void DeleteWhere(std::function<bool(Car*)> eval);
 };

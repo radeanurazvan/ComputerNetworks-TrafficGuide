@@ -17,10 +17,6 @@ Response Response::Unauthorized() {
     return Response(HttpCode::Unauhtorized, "");
 }
 
-Response Response::Delegated() {
-    return Response(HttpCode::Delegated, "");
-}
-
 Response Response::Custom(std::string body, int code) {
     return Response(code, body);
 }

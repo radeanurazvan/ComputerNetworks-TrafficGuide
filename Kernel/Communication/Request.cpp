@@ -4,16 +4,20 @@
 Request::Request() {
 }
 
-Request Request::FromJson(std::string json) {
+Request Request::InvalidRequest() {
     auto request = Request();
+    request.isValid = false;
+
+    return request;
+}
+
+Request Request::FromJson(std::string json) {
     if(!JsonHelper::IsValidJson(json)) {
-        request.isValid = false;
-        return request;
+        return InvalidRequest();
     }
 
     if(!JsonHelper::CanParse<Request>(json)) {
-        request.isValid = false;
-        return request;    
+        return InvalidRequest();    
     }
 
     return JsonHelper::Parse<Request>(json);

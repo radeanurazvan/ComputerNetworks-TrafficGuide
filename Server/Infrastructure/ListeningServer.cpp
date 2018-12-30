@@ -39,22 +39,38 @@ void ListeningServer::ConcurrentServe()
         }
         printf("\n\n[server] New client\n");
 
-        auto request = server->ReadFromClient(client);
-        auto finalizer = [&]() {
-            auto clientThread = std::thread(this->server->GetConcurrentHandler(), client, request);
-            clientThread.detach();
+        auto clientHandlingThread = std::thread([&]() {
+            auto socketIsHealthy = true;
+            while(socketIsHealthy) {
+                auto requestOrFail = server->ReadFromClient(client);
+                requestOrFail
+                    ->OnSuccess([&](Request request){
+                        auto finalizer = [&]() {
+                            auto clientHandler = this->server->GetConcurrentHandler();
+                            return clientHandler(client, request);
+                        };
 
-            return Response::Delegated();
-        };
+                        RequestPipeline pipeline = { 
+                            new ModelValidationMiddleware(),
+                            new AuthorizationMiddleware(client)
+                        };
+                        pipeline = pipeline
+                            .ForClient(client)
+                            .ForServer(this->server)
+                            .WithFinalizer(finalizer);
+                        pipeline.Run(request);
+                    })
+                    ->OnFail([&socketIsHealthy]() {
+                        socketIsHealthy = false;
+                    });
+            }
 
-        RequestPipeline pipeline = { 
-            new ModelValidationMiddleware(),
-            new AuthorizationMiddleware(client)
-        };
-        pipeline = pipeline
-            .ForClient(client)
-            .ForServer(this->server)
-            .WithFinalizer(finalizer);
-        pipeline.Run(request);
+            printf("[server] Client closed connection\n");
+            Server::CloseSocket(client);
+        });
+
+        clientHandlingThread.detach();
+        
     }
+    printf("[server] While server terminated\n");
 }

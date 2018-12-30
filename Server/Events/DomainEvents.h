@@ -12,13 +12,13 @@ class DomainEvents {
         DomainEvents();
     public:
         template <class T>
-        static void Subscribe(std::function<void(T*)> handler);
+        static void Subscribe(std::function<void(DomainEvent*)> handler);
         template <class T>
         static void Publish(T* event);
 };
 
 template <class T>
-void DomainEvents::Subscribe(std::function<void(T*)> handler) {
+void DomainEvents::Subscribe(std::function<void(DomainEvent*)> handler) {
     printf("[server] Subscribing for %s\n", typeid(T).name());
 
     auto eventKey = typeid(T).name();

@@ -29,3 +29,13 @@ void CarRepository::Delete(Guid id) {
         }
     }
 }
+
+void CarRepository::DeleteWhere(std::function<bool(Car*)> eval) {
+    for(auto i=0; i< cars.size(); i++) {
+        auto car = cars.at(i);
+        if(eval(car)) {
+            cars.erase(cars.begin() + i);
+            break;
+        }
+    }
+}

@@ -25,20 +25,23 @@ void TrafficGuide::Run()
 
             auto adapterOrFail = serverScaffolder->MethodAdapterForRequest(*scaffoldingRequest);
             
+            Response handlingResponse;
             adapterOrFail
-                ->OnSuccess([clientSocket, clientRequest, server](ControllerResourceAdapter* adapter) {
+                ->OnSuccess([&](ControllerResourceAdapter* adapter) {
                     auto responseOrFail = adapter->GetResponse(clientRequest.body);
                     responseOrFail
                         ->OnSuccess([&](Response response) {
-                            Server::WriteToClient(clientSocket, response);
+                            handlingResponse = response;
                         })
-                        ->OnFail([clientSocket, server, responseOrFail]() {
-                            Server::WriteToClient(clientSocket, Response::BadRequest(responseOrFail->GetErrorMessage()));
+                        ->OnFail([&]() {
+                            handlingResponse = Response::BadRequest(responseOrFail->GetErrorMessage());
                         });
                 })
-                ->OnFail([clientSocket, server, adapterOrFail]() {
-                    Server::WriteToClient(clientSocket, Response::BadRequest(adapterOrFail->GetErrorMessage()));
+                ->OnFail([&]() {
+                    handlingResponse = Response::BadRequest(adapterOrFail->GetErrorMessage());
                 });
+            
+            return handlingResponse;
         })
         ->Listen(8080)
         ->OnSuccess([server](ListenOptions* options) {

@@ -11,15 +11,16 @@
 
 class Server {
     private:
-        std::function<void(int, Request)> concurrentHandler = [](int clientSocket, Request request) {};
+        std::function<Response(int, Request)> concurrentHandler = [](int clientSocket, Request request) { return Response::Ok<std::string>(""); };
         GenericResult<int>* CreateSocket(); 
         Result* Bind(GenericResult<int>* socket, int port);
         Result* Listen(GenericResult<int>* socketResult);
 
     public:
-        Server* HandleConcurrentClientsUsing(std::function<void(int, Request)> handler);
+        Server* HandleConcurrentClientsUsing(std::function<Response(int, Request)> handler);
         GenericResult<ListenOptions*>* Listen(int port);
-        std::function<void(int, Request)> GetConcurrentHandler();
-        Request ReadFromClient(int clientSocket);
-        static void WriteToClient(int clientSocket, Response message);
+        std::function<Response(int, Request)> GetConcurrentHandler();
+        GenericResult<Request>* ReadFromClient(int clientSocket);
+        static Result* WriteToClient(int clientSocket, Response message);
+        static void CloseSocket(int socket);
 };
