@@ -9,9 +9,11 @@ g++ -g -I ../ -pthread -fpermissive      \
     App/*                                \
     Domain/Car/*                         \
     Domain/WorldMap/*                    \
-    Domain/News/*                    \
+    Domain/News/Jobs/*                   \
+    Domain/News/*.cpp                    \
     Infrastructure/Persistence/*         \
     Infrastructure/*.cpp                 \
+    Jobs/*                        \
     Middlewares/*                        \
     Pipeline/*                           \
     Resources/Cars/Requests/*            \

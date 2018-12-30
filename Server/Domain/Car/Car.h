@@ -4,6 +4,7 @@
 #include "Kernel/Functional/GenericResult.h"
 
 #include "../News/NewsSubscription.h"
+#include "../News/NewsMessage.h"
 
 class Car {
     private:
@@ -22,4 +23,5 @@ class Car {
         double GetSpeed();
         Result* Update(int position, double speed);
         Result* SubscribeTo(NewsType type);
+        bool IsInterestedIn(NewsMessage* message);
 };

@@ -12,4 +12,6 @@ class NewsMessage {
         static NewsMessage* WeatherMessage(std::string message);
         static NewsMessage* SportsMessage(std::string message);
         static NewsMessage* FuelPriceMessage(std::string message);
+        NewsType GetType();
+        std::string GetMessage();
 };

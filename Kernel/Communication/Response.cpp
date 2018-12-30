@@ -25,6 +25,11 @@ Response Response::Custom(std::string body, int code) {
     return Response(code, body);
 }
 
+
+Response Response::Notification(std::string body) {
+    return Response(HttpCode::Notification, body);
+}
+
 int Response::GetCode() const {
     return this->code;
 }

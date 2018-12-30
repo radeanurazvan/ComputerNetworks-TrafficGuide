@@ -17,3 +17,11 @@ NewsMessage* NewsMessage::SportsMessage(std::string message) {
 NewsMessage* NewsMessage::FuelPriceMessage(std::string message) {
     return new NewsMessage(FuelPrice, message);
 }
+
+NewsType NewsMessage::GetType() {
+    return this->type;
+}
+
+std::string NewsMessage::GetMessage() {
+    return this->message;
+}

@@ -5,6 +5,7 @@
 #include "Server/Scaffolding/ScaffoldingRequest.h"
 #include "Server/Scaffolding/ServerScaffolder.h"
 
+#include "AppBootstrapper.h"
 #include "TrafficGuide.h"
 
 TrafficGuide::TrafficGuide() {}
@@ -41,6 +42,8 @@ void TrafficGuide::Run()
         })
         ->Listen(8080)
         ->OnSuccess([server](ListenOptions* options) {
+            AppBootstrapper::Bootstrap();
+
             auto listeningServer = new ListeningServer(server, options->GetSocket(), options->GetPort());
             listeningServer->ConcurrentServe();
         });

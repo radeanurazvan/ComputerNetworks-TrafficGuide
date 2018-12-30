@@ -53,3 +53,13 @@ Result* Car::SubscribeTo(NewsType type) {
     this->subscriptions.push_back(NewsSubscription::Create(type));
     return Result::Ok();
 }
+
+bool Car::IsInterestedIn(NewsMessage* message) {
+    for(auto subscription: subscriptions) {
+        if(subscription->GetType() == message->GetType()) {
+            return true;
+        }
+    }
+
+    return false;
+}
