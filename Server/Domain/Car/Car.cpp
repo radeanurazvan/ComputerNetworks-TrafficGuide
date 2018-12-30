@@ -8,6 +8,22 @@ Car::Car(int socket, int position, double speed) {
     this->speed = speed;
 }
 
+Guid Car::GetId() {
+    return this->id;
+}
+
+int Car::GetSocket() {
+    return this->socket;
+}
+
+int Car::GetPosition() {
+    return this->position;
+}
+
+double Car::GetSpeed() {
+    return this->speed;
+}
+
 GenericResult<Car*>* Car::Create(int socket, int position, double speed) {
     if(position<0 || speed<0) {
         return GenericResult<Car*>::Fail("Bad car info");
@@ -27,18 +43,13 @@ Result* Car::Update(int position, double speed) {
     return Result::Ok();
 }
 
-Guid Car::GetId() {
-    return this->id;
-}
+Result* Car::SubscribeTo(NewsType type) {
+    for(auto subscription : subscriptions) {
+        if(subscription->GetType() == type) {
+            return Result::Fail("Already subscribed to this type of news!");
+        }
+    }
 
-int Car::GetSocket() {
-    return this->socket;
-}
-
-int Car::GetPosition() {
-    return this->position;
-}
-
-double Car::GetSpeed() {
-    return this->speed;
+    this->subscriptions.push_back(NewsSubscription::Create(type));
+    return Result::Ok();
 }

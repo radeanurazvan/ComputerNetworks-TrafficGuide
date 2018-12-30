@@ -1,5 +1,6 @@
 #include "ServerScaffolder.h"
 #include "Server/Resources/Cars/CarsController.h"
+#include "Server/Resources/News/NewsController.h"
 
 ServerScaffolder::ServerScaffolder(int clientSocket) {
     this->clientSocket = clientSocket;
@@ -9,6 +10,7 @@ std::map<std::string, ServerResource*> ServerScaffolder::GetServerResourcesMap()
     std::map<std::string, ServerResource*> resourcesMap;
 
     resourcesMap["cars"] = new CarsController(this->clientSocket);
+    resourcesMap["news"] = new NewsController();
 
     return resourcesMap;
 }
