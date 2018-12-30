@@ -21,6 +21,10 @@ Response Response::Delegated() {
     return Response(HttpCode::Delegated, "");
 }
 
+Response Response::Custom(std::string body, int code) {
+    return Response(code, body);
+}
+
 int Response::GetCode() const {
     return this->code;
 }

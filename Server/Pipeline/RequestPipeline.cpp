@@ -48,6 +48,6 @@ void RequestPipeline::Run(Request request)
     auto response = firstMiddleware->Invoke(request);
     
     if(response.GetCode() != Delegated) {
-        this->server->WriteToClient(this->client, response);
+        Server::WriteToClient(this->client, response);
     }
 }

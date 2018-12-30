@@ -49,3 +49,27 @@ std::vector<WorldStreet*> WorldMap::GetStreets() {
 std::vector<WorldSpeedLimit*> WorldMap::GetSpeedLimits() {
     return speedLimits;
 }
+
+GenericResult<WorldSpeedLimit*>* WorldMap::LimitFor(int position) {
+    for(auto limit: speedLimits) {
+        if(limit->ContainsPosition(position)) {
+            return GenericResult<WorldSpeedLimit*>::Ok(limit);
+        }
+    }
+
+    return GenericResult<WorldSpeedLimit*>::Fail("No limit found for position");
+}
+
+GenericResult<std::string>* WorldMap::LimitFeedbackFor(Car* car) {
+    auto limitOrNothing = LimitFor(car->GetPosition());
+    return limitOrNothing->Map<std::string>([car](WorldSpeedLimit* limit) {
+        char message[100];
+        if(car->GetSpeed() > limit->GetValue()) {
+            sprintf(message, "[DANGER] Driving above speed limit! Please slow down to %d for the current road", limit->GetValue());
+        } else {
+            sprintf(message, "[INFO] Current speed is below speed limit. Please keep your speed below %d", limit->GetValue());
+        }
+        
+        return GenericResult<std::string>::Ok(std::string(message));
+    });
+}

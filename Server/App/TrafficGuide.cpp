@@ -29,14 +29,14 @@ void TrafficGuide::Run()
                     auto responseOrFail = adapter->GetResponse(clientRequest.body);
                     responseOrFail
                         ->OnSuccess([&](Response response) {
-                            server->WriteToClient(clientSocket, response);
+                            Server::WriteToClient(clientSocket, response);
                         })
                         ->OnFail([clientSocket, server, responseOrFail]() {
-                            server->WriteToClient(clientSocket, Response::BadRequest(responseOrFail->GetErrorMessage()));
+                            Server::WriteToClient(clientSocket, Response::BadRequest(responseOrFail->GetErrorMessage()));
                         });
                 })
                 ->OnFail([clientSocket, server, adapterOrFail]() {
-                    server->WriteToClient(clientSocket, Response::BadRequest(adapterOrFail->GetErrorMessage()));
+                    Server::WriteToClient(clientSocket, Response::BadRequest(adapterOrFail->GetErrorMessage()));
                 });
         })
         ->Listen(8080)

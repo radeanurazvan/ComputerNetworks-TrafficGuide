@@ -21,5 +21,5 @@ class Server {
         GenericResult<ListenOptions*>* Listen(int port);
         std::function<void(int, Request)> GetConcurrentHandler();
         Request ReadFromClient(int clientSocket);
-        void WriteToClient(int clientSocket, Response message);
+        static void WriteToClient(int clientSocket, Response message);
 };

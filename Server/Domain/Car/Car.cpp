@@ -31,6 +31,10 @@ Guid Car::GetId() {
     return this->id;
 }
 
+int Car::GetSocket() {
+    return this->socket;
+}
+
 int Car::GetPosition() {
     return this->position;
 }

@@ -1,10 +1,12 @@
 #include "CarsController.h"
 
-#include "Server/Infrastructure/Persistence/CarRepository.h"
-#include "Server/Resources/Common/ConcreteControllerResourceAdapter.h"
 #include "Requests/CreateCarSessionCommand.h"
 
+#include "Server/Infrastructure/Persistence/CarRepository.h"
+#include "Server/Resources/Common/ConcreteControllerResourceAdapter.h"
+#include "Server/Events/DomainEvents.h"
 #include "Server/Domain/Car/Car.h"
+#include "Server/Domain/WorldMap/WorldMap.h"
 
 CarsController::CarsController(int clientSocket) {
     this->clientSocket = clientSocket;
@@ -26,11 +28,16 @@ Response CarsController::CreateCarSession(CreateCarSessionCommand* command) {
 Response CarsController::UpdateCar(UpdateCarCommand* command) {
     auto carOrNothing = CarRepository::GetById(Guid(command->carId));
 
-    auto updateResult = carOrNothing->Map([command](Car* car) {
-        return car->Update(command->position, command->speed);
-    });
+    auto limitFeedbackResult = carOrNothing->Map<std::string>([command](Car* car) {
+        auto updateResult = car->Update(command->position, command->speed); 
+        if(!updateResult->IsValid()) {
+            return GenericResult<std::string>::Fail(updateResult->GetErrorMessage());
+        }
 
-    return this->ResponseFromResult(updateResult);
+        return WorldMap::LimitFeedbackFor(car);
+    });
+    
+    return this->ResponseFromResult(limitFeedbackResult, NotFound);
 }
 
 std::map<std::string, ControllerResourceAdapter*> CarsController::GetAdaptersMap() {

@@ -18,5 +18,6 @@ class WorldSpeedLimit {
         SpeedLimit value;
     public:
         static GenericResult<WorldSpeedLimit*>* Create(int start, int end, SpeedLimit value);
-
+        bool ContainsPosition(int position);
+        int GetValue();
 };

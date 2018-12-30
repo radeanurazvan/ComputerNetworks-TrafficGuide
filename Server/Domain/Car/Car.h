@@ -13,6 +13,7 @@ class Car {
     public:
         static GenericResult<Car*>* Create(int socket, int position, double speed);
         Guid GetId();
+        int GetSocket();
         int GetPosition();
         double GetSpeed();
         Result* Update(int position, double speed);

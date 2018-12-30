@@ -51,7 +51,8 @@ bool GenericResult<T>::IsValid() {
 template <class T>
 const char* GenericResult<T>::GetErrorMessage() {
     if(this->isValid) {
-        throw "Cannot get error message from valid result!";
+        perror("Cannot get error message from valid result!");
+        throw std::string("Cannot get error message from valid result!");
     }
     
     return this->errorMessage;
@@ -60,7 +61,8 @@ const char* GenericResult<T>::GetErrorMessage() {
 template <class T>
 T GenericResult<T>::GetValue() {
     if(!this->isValid) {
-        throw "Cannot get value from invalid result!";
+        perror("Cannot get value from invalid result!");
+        throw std::string("Cannot get value from invalid result!");
     }
 
     return this->value;

@@ -4,6 +4,8 @@
 #include "WorldStreet.h"
 #include "WorldSpeedLimit.h"
 
+#include "../Car/Car.h"
+
 class WorldMap {
     private:
         WorldMap();
@@ -14,4 +16,6 @@ class WorldMap {
     public:
         static std::vector<WorldStreet*> GetStreets();
         static std::vector<WorldSpeedLimit*> GetSpeedLimits();
+        static GenericResult<WorldSpeedLimit*>* LimitFor(int position);
+        static GenericResult<std::string>* LimitFeedbackFor(Car* car);
 };

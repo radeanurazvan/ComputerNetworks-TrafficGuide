@@ -13,3 +13,11 @@ GenericResult<WorldSpeedLimit*>* WorldSpeedLimit::Create(int start, int end, Spe
 
     return GenericResult<WorldSpeedLimit*>::Ok(new WorldSpeedLimit(start, end, value));
 }
+
+bool WorldSpeedLimit::ContainsPosition(int position) {
+    return limitStart <= position && limitEnd >= position;
+}
+
+int WorldSpeedLimit::GetValue() {
+    return this->value; 
+}
