@@ -20,6 +20,18 @@ ListeningServer::ListeningServer(Server* server, int socketDescriptor, int port)
     this->port = port;
 }
 
+ListeningServer* ListeningServer::HandleConcurrentClientsUsing(std::function<Response(int, Guid, Request)> handler)
+{
+    this->concurrentHandler = handler;
+    return this;
+}
+
+ListeningServer* ListeningServer::WithConnectionIdentityGeneratedBy(std::function<Guid(int)> generator)
+{
+    this->connectionIdentityGenerator = generator;
+    return this;
+}
+
 void ListeningServer::ConcurrentServe()
 {
     sockaddr_in from;
@@ -37,7 +49,8 @@ void ListeningServer::ConcurrentServe()
             perror("[server] Server accept error.\n");
             continue;
         }
-        printf("\n\n[server] New client\n");
+        auto connectionId = this->connectionIdentityGenerator(client);
+        printf("\n\n[server] New client with connection id %s\n", connectionId.ToString().c_str());
 
         auto clientHandlingThread = std::thread([&]() {
             auto socketIsHealthy = true;
@@ -46,13 +59,12 @@ void ListeningServer::ConcurrentServe()
                 requestOrFail
                     ->OnSuccess([&](Request request){
                         auto finalizer = [&]() {
-                            auto clientHandler = this->server->GetConcurrentHandler();
-                            return clientHandler(client, request);
+                            return this->concurrentHandler(client, connectionId, request);
                         };
 
                         RequestPipeline pipeline = { 
                             new ModelValidationMiddleware(),
-                            new AuthorizationMiddleware(client)
+                            new AuthorizationMiddleware()
                         };
                         pipeline = pipeline
                             .ForClient(client)

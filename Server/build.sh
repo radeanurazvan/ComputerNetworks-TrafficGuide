@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 g++ -g -I ../ -pthread -fpermissive      \
-    -o ../output/TrafficGuideServer.exe  \
+    -o ../output/TrafficGuideServer.out  \
     ../Kernel/Functional/*               \
     ../Kernel/Identity/*                 \
     ../Kernel/Communication/*            \

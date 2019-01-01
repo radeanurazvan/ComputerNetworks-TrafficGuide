@@ -5,6 +5,6 @@
 
 void UnreachableCarDetectedEventHandler::Handle(UnreachableCarDetectedEvent* event) {
     CarRepository::DeleteWhere([event](Car* car) {
-        return car->GetSocket() == event->GetClient();
+        return car->GetId() == event->GetConnectionId();
     });
 }

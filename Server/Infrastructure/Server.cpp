@@ -80,16 +80,6 @@ Result* Server::Listen(GenericResult<int> *socketResult)
     return Result::Ok();
 }
 
-Server *Server::HandleConcurrentClientsUsing(std::function<Response(int, Request)> handler)
-{
-    this->concurrentHandler = handler;
-    return this;
-}
-
-std::function<Response(int, Request)> Server::GetConcurrentHandler() {
-    return this->concurrentHandler;
-}
-
 GenericResult<Request>* Server::ReadFromClient(int clientSocket) {
     char* buffer = (char*)malloc(MAX_REQUEST_SIZE * sizeof(char));
     auto readBytes = read(clientSocket, buffer, MAX_REQUEST_SIZE);

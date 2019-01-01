@@ -1,15 +1,16 @@
 #pragma once
 
+#include "Kernel/Identity/Guid.h"
 #include "Server/Events/DomainEvent.h"
 
 class UnreachableCarDetectedEvent : public DomainEvent {
     private:
-        int client;
+        Guid connectionId;
     public:
-        UnreachableCarDetectedEvent(int client) {
-            this->client = client;
+        UnreachableCarDetectedEvent(Guid connectionId) {
+            this->connectionId = connectionId;
         }
-        int GetClient() {
-            return this->client;
+        Guid GetConnectionId() {
+            return this->connectionId;
         }
 };

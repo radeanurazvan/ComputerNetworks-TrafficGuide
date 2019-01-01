@@ -22,6 +22,12 @@ RequestPipeline RequestPipeline::ForClient(int client)
     return *this;
 }
 
+RequestPipeline RequestPipeline::WithConnectionId(Guid connectionId)
+{
+    this->connectionId = connectionId;
+    return *this;
+}
+
 RequestPipeline RequestPipeline::WithFinalizer(std::function<Response()> finalizer) {
     this->finalizer = finalizer;
     return *this;
@@ -53,6 +59,6 @@ void RequestPipeline::Run(Request request)
 
     Server::WriteToClient(this->client, response)->OnFail([this]() {
         Server::CloseSocket(this->client);
-        DomainEvents::Publish<UnreachableCarDetectedEvent>(new UnreachableCarDetectedEvent(this->client));
+        DomainEvents::Publish<UnreachableCarDetectedEvent>(new UnreachableCarDetectedEvent(this->connectionId));
     });
 }

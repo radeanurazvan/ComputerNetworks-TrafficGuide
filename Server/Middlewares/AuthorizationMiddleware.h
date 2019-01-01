@@ -8,9 +8,8 @@
 
 class AuthorizationMiddleware : public Middleware {
     private:
-        int client;
         bool RequestNeedsAuthorization(Request request) {
-            auto scaffolder = new ServerScaffolder(this->client);
+            auto scaffolder = new ServerScaffolder();
             auto scaffoldingRequest = ScaffoldingRequest(request.resource);
             auto adapterOrFail = scaffolder->MethodAdapterForRequest(scaffoldingRequest);
 
@@ -22,8 +21,7 @@ class AuthorizationMiddleware : public Middleware {
             return adapter->NeedsAuthorization();
         }
     public:
-        AuthorizationMiddleware(int client) : Middleware() {
-            this->client = client;
+        AuthorizationMiddleware() : Middleware() {
         }
         Response Invoke(Request request, std::function<Response()> next) {
             if(!this->RequestNeedsAuthorization(request)) {

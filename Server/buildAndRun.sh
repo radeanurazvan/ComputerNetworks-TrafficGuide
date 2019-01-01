@@ -6,4 +6,4 @@ printf "Building\n"
 
 printf "\nSuccessfully built. Running:\n\n"
 
-../output/TrafficGuideServer.exe
+../output/TrafficGuideServer.out
