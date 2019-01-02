@@ -26,6 +26,15 @@ ListeningServer* ListeningServer::HandleConcurrentClientsUsing(std::function<Res
     return this;
 }
 
+Guid ListeningServer::AttachClientIdentity(int clientSocket) {
+    auto connectionId = this->connectionIdentityGenerator(clientSocket);
+    printf("\n\n[server] New client with connection id %s\n", connectionId.ToString().c_str());
+
+    Server::WriteToClient(clientSocket, Response::Ok<std::string>(connectionId.ToString()));
+
+    return connectionId;
+}
+
 ListeningServer* ListeningServer::WithConnectionIdentityGeneratedBy(std::function<Guid(int)> generator)
 {
     this->connectionIdentityGenerator = generator;
@@ -49,8 +58,7 @@ void ListeningServer::ConcurrentServe()
             perror("[server] Server accept error.\n");
             continue;
         }
-        auto connectionId = this->connectionIdentityGenerator(client);
-        printf("\n\n[server] New client with connection id %s\n", connectionId.ToString().c_str());
+        auto connectionId = this->AttachClientIdentity(client);
 
         auto clientHandlingThread = std::thread([&]() {
             auto socketIsHealthy = true;

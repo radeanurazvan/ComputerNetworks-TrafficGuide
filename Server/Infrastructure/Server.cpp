@@ -88,7 +88,7 @@ GenericResult<Request>* Server::ReadFromClient(int clientSocket) {
         return GenericResult<Request>::Fail("Unreachable socket");
     }
 
-    printf("[server] Read from client %d bytes: %s\n", strlen(buffer), buffer);
+    printf("[server] Read from client socket %d: %d bytes: %s\n", clientSocket, strlen(buffer), buffer);
     return GenericResult<Request>::Ok(Request::FromJson(buffer));
 }
 

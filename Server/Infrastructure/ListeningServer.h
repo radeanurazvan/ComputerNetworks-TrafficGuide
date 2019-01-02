@@ -13,6 +13,7 @@ class ListeningServer {
         std::function<Guid(int)> connectionIdentityGenerator = [](int clientSocket) { 
             return Guid::EmptyGuid(); 
         };
+        Guid AttachClientIdentity(int socket);
     public:
         ListeningServer(Server* server, int socket, int port);
         ListeningServer* WithConnectionIdentityGeneratedBy(std::function<Guid(int)> generator);

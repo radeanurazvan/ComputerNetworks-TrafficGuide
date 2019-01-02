@@ -10,10 +10,9 @@ void CarCrashReportedEventHandler::Handle(CarCrashReportedEvent* event) {
     });
 
     auto streetOrNothing = WorldMap::StreetAt(crash->GetPosition());
-    streetOrNothing->OnSuccess([cars](WorldStreet* street) {
+    streetOrNothing->OnSuccess([&](WorldStreet* street) {
         for(auto car: cars) {
-            char notification[100];
-            sprintf(notification, "[WARNING] Crash up ahead on street %s!", street->GetName().c_str());
+            auto notification = this->GetNotificationMessage(car, crash, street);            
 
             Server::WriteToClient(car->GetSocket(), Response::Notification(std::string(notification)));
         }

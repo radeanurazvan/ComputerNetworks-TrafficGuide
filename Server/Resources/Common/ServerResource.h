@@ -13,12 +13,8 @@ class ServerResource {
         template <class T>
         Response ResponseFromResult(GenericResult<T>* result, int code = BadRequest);
         Response ResponseFromResult(Result* result, int code = BadRequest) {
-            if(code != BadRequest) {
-                return Response::Custom(result->GetErrorMessage(), code);
-            }
-
             if(!result->IsValid()) {
-                return Response::BadRequest(result->GetErrorMessage());
+                return Response::Custom(result->GetErrorMessage(), code);
             }
 
             return Response::Ok<std::string>("");
