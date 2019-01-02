@@ -24,6 +24,7 @@ class Car {
         double GetSpeed();
         Result* Update(int position, double speed);
         Result* SubscribeTo(NewsType type);
+        Result* UnsubscribeTo(NewsType type);
         bool IsInterestedIn(NewsMessage* message);
         bool IsCloseTo(WorldCarCrash* crash);
 };

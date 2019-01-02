@@ -55,6 +55,19 @@ Result* Car::SubscribeTo(NewsType type) {
     return Result::Ok();
 }
 
+Result* Car::UnsubscribeTo(NewsType type) {
+    for(auto i = 0; i < subscriptions.size(); i++) {
+        auto subscription = subscriptions.at(i);
+        if(subscription->GetType() == type) {
+            subscriptions.erase(subscriptions.begin() + i);
+            return Result::Ok();
+        }
+    }
+
+    this->subscriptions.push_back(NewsSubscription::Create(type));
+    return Result::Fail("Cannot unsubscribe for a nonexisting subscription!");
+}
+
 bool Car::IsInterestedIn(NewsMessage* message) {
     for(auto subscription: subscriptions) {
         if(subscription->GetType() == message->GetType()) {
