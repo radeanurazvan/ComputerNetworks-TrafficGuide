@@ -7,6 +7,7 @@
 
 #include "Server/Events/DomainEvents.h"
 #include "Server/Domain/Car/Events/CarConnectedEvent.h"
+#include "Server/Domain/Car/Events/UnreachableCarDetectedEvent.h"
 #include "Server/Domain/Car/EventHandlers/CarConnectedEventHandler.h"
 
 #include "AppBootstrapper.h"
@@ -56,6 +57,9 @@ void TrafficGuide::Run()
                         });
                     
                     return handlingResponse;
+            })
+            ->OnConnectionClosed([](Guid connectionId) {
+                DomainEvents::Publish<UnreachableCarDetectedEvent>(new UnreachableCarDetectedEvent(connectionId));
             })
             ->ConcurrentServe();
         });

@@ -41,12 +41,17 @@ ListeningServer* ListeningServer::WithConnectionIdentityGeneratedBy(std::functio
     return this;
 }
 
+ListeningServer* ListeningServer::OnConnectionClosed(std::function<void(Guid)> onConnectionClosed) {
+    this->onConnectionClosed = onConnectionClosed;
+    return this;
+}
+
 void ListeningServer::ConcurrentServe()
 {
     sockaddr_in from;
     int length = sizeof(from);
 
-    while (1)
+    while (true)
     {
         int client;
 
@@ -60,13 +65,15 @@ void ListeningServer::ConcurrentServe()
         }
         auto connectionId = this->AttachClientIdentity(client);
 
-        auto clientHandlingThread = std::thread([&]() {
+        auto clientHandlingThread = std::thread([*this, client, connectionId]() {
             auto socketIsHealthy = true;
             while(socketIsHealthy) {
                 auto requestOrFail = server->ReadFromClient(client);
+                printf("\n\n---------Start of handling client %d----------\n", client);
                 requestOrFail
-                    ->OnSuccess([&](Request request){
-                        auto finalizer = [&]() {
+                    ->OnSuccess([*this, client, connectionId](Request request){
+
+                        auto finalizer = [*this, client, connectionId, request]() {
                             return this->concurrentHandler(client, connectionId, request);
                         };
 
@@ -77,16 +84,21 @@ void ListeningServer::ConcurrentServe()
                         pipeline = pipeline
                             .ForClient(client)
                             .ForServer(this->server)
-                            .WithFinalizer(finalizer);
+                            .WithFinalizer(finalizer)
+                            .OnConnectionClosed(this->onConnectionClosed);
                         pipeline.Run(request);
                     })
-                    ->OnFail([&socketIsHealthy]() {
+                    ->OnFail([&socketIsHealthy, client, connectionId]() {
                         socketIsHealthy = false;
+                        printf("[server] Socket %d with id %s not healthy anymore\n\n", client, connectionId.ToString().c_str());
                     });
+
+                printf("---------End of handling client %d----------\n\n", client);
             }
 
             printf("[server] Client closed connection\n");
             Server::CloseSocket(client);
+            this->onConnectionClosed(connectionId);
         });
 
         clientHandlingThread.detach();

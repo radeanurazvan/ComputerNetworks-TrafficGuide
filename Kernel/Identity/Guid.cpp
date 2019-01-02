@@ -42,7 +42,7 @@ Guid Guid::EmptyGuid() {
     return Guid();
 }
 
-std::string Guid::ToString() {
+std::string Guid::ToString() const {
     return this->uuid;
 }
 

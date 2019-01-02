@@ -13,10 +13,12 @@ class ListeningServer {
         std::function<Guid(int)> connectionIdentityGenerator = [](int clientSocket) { 
             return Guid::EmptyGuid(); 
         };
+        std::function<void(Guid)> onConnectionClosed = [](Guid connectionId) {};
         Guid AttachClientIdentity(int socket);
     public:
         ListeningServer(Server* server, int socket, int port);
         ListeningServer* WithConnectionIdentityGeneratedBy(std::function<Guid(int)> generator);
-        ListeningServer* HandleConcurrentClientsUsing(std::function<Response(int, Guid, Request)> handler);        
+        ListeningServer* HandleConcurrentClientsUsing(std::function<Response(int, Guid, Request)> handler);  
+        ListeningServer* OnConnectionClosed(std::function<void(Guid)> onConnectionClosed);   
         void ConcurrentServe();
 };

@@ -42,14 +42,15 @@ void writeToServer(int sd) {
     char mesaj[255];
     std::cin.getline(mesaj, 255);
     printf("[client] Sending message %s\n\n", mesaj);
-    if (write(sd, mesaj, 255) <= 0)
+    auto writtenBytes = write(sd, mesaj, 255);
+    if (writtenBytes <= 0)
     {
       perror("[client] Write error.\n");
       break;
     }
     else
     {
-      printf("[client] Successfully written]\n");
+      printf("[client] Successfully written %d bytes \n", writtenBytes);
     }
   }
 }

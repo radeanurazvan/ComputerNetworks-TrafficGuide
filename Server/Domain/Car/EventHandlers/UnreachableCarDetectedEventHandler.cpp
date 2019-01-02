@@ -7,4 +7,5 @@ void UnreachableCarDetectedEventHandler::Handle(UnreachableCarDetectedEvent* eve
     CarRepository::DeleteWhere([event](Car* car) {
         return car->GetId() == event->GetConnectionId();
     });
+    printf("[server] Deleted car with id %s\n\n", event->GetConnectionId().ToString().c_str());
 }

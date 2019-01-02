@@ -28,6 +28,11 @@ RequestPipeline RequestPipeline::WithConnectionId(Guid connectionId)
     return *this;
 }
 
+RequestPipeline RequestPipeline::OnConnectionClosed(std::function<void(Guid)> onConnectionClosed) {
+    this->onConnectionClosed = onConnectionClosed;
+    return *this;
+}
+
 RequestPipeline RequestPipeline::WithFinalizer(std::function<Response()> finalizer) {
     this->finalizer = finalizer;
     return *this;
@@ -35,9 +40,22 @@ RequestPipeline RequestPipeline::WithFinalizer(std::function<Response()> finaliz
 
 void RequestPipeline::Run(Request request)
 {
-    std::vector<MiddlewareInPipeline*> middlewaresInPipeline;
 
     printf("[server] Running pipeline...\n");
+    auto chainedMiddlewares = this->GetChainedMiddlewares(request);    
+    auto firstMiddleware = chainedMiddlewares[0];
+    auto response = firstMiddleware->Invoke(request);
+
+    Server::WriteToClient(this->client, response)->OnFail([this]() {
+        printf("[server] Write failed for client %d, closing socket\n\n", this->client);
+        
+        Server::CloseSocket(this->client);
+        this->onConnectionClosed(this->connectionId);
+    });
+}
+
+std::vector<MiddlewareInPipeline*> RequestPipeline::GetChainedMiddlewares(Request request) {
+    std::vector<MiddlewareInPipeline*> middlewaresInPipeline;    
     auto lastMiddleware = middlewares.at(middlewares.size() - 1);
     auto lastMiddlewareInPipeline = new MiddlewareInPipeline(lastMiddleware, finalizer);
     middlewaresInPipeline.insert(middlewaresInPipeline.begin(), lastMiddlewareInPipeline);
@@ -54,11 +72,5 @@ void RequestPipeline::Run(Request request)
         };
     }
 
-    auto firstMiddleware = middlewaresInPipeline[0];
-    auto response = firstMiddleware->Invoke(request);
-
-    Server::WriteToClient(this->client, response)->OnFail([this]() {
-        Server::CloseSocket(this->client);
-        DomainEvents::Publish<UnreachableCarDetectedEvent>(new UnreachableCarDetectedEvent(this->connectionId));
-    });
+    return middlewaresInPipeline;
 }

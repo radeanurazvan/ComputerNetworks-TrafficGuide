@@ -10,5 +10,5 @@ class Guid {
         static Guid NewGuid();
         static Guid EmptyGuid();
         bool operator == (Guid other);
-        std::string ToString();
+        std::string ToString() const;
 };
