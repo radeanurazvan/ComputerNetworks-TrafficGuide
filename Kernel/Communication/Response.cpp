@@ -14,7 +14,7 @@ Response Response::BadRequest(std::string reason = "") {
 }
 
 Response Response::Unauthorized() {
-    return Response(HttpCode::Unauhtorized, "");
+    return Response(HttpCode::Unauthorized, "");
 }
 
 Response Response::Custom(std::string body, int code) {
@@ -36,4 +36,11 @@ std::string Response::GetBody() const {
 
 void to_json(nlohmann::json& j, const Response& response) {
     j = nlohmann::json{{"code", response.GetCode()}, {"body", response.GetBody()}};
+}
+
+void from_json(const nlohmann::json& json, Response& response) {
+    auto code = json.at("code").get<HttpCode>();
+    auto body = json.at("body").get<std::string>();
+
+    response = Response::Custom(body, code);     
 }

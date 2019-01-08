@@ -16,3 +16,5 @@ class Request {
 };
 
 void from_json(const nlohmann::json& json, Request& request);
+
+void to_json(nlohmann::json& j, const Request& request);

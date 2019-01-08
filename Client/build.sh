@@ -2,5 +2,8 @@
 
 g++ -fpermissive -pthread -I ../ -o ../output/TrafficGuideClient.out \
     ../Kernel/Functional/*          \
-    Client.cpp                      \
+    ../Kernel/Communication/*       \
+    ../Kernel/Helpers/*             \
+    App/*                           \
+    Infrastructure/*                \
     Entry.cpp

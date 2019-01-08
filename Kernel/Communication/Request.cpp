@@ -32,3 +32,13 @@ void from_json(const nlohmann::json& json, Request& request) {
     request.body = json.at("body").get<std::string>();
     request.resource = json.at("resource").get<std::string>();
 }
+
+void to_json(nlohmann::json& j, const Request& request) {
+    auto headers = JsonHelper::Serialize<std::map<std::string, std::string>>(request.headers);
+    
+    j = nlohmann::json {
+        { "resource", request.resource },
+        { "body", request.body },
+        { "headers", headers }
+    };
+}

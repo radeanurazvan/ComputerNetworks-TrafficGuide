@@ -30,7 +30,10 @@ Guid ListeningServer::AttachClientIdentity(int clientSocket) {
     auto connectionId = this->connectionIdentityGenerator(clientSocket);
     printf("\n\n[server] New client with connection id %s\n", connectionId.ToString().c_str());
 
-    Server::WriteToClient(clientSocket, Response::Ok<std::string>(connectionId.ToString()));
+    std::map<std::string, std::string> responseValues;
+    responseValues["token"] = connectionId.ToString();
+    
+    Server::WriteToClient(clientSocket, Response::Ok<std::map<std::string, std::string>>(responseValues));
 
     return connectionId;
 }

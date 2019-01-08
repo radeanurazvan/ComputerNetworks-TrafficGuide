@@ -6,7 +6,7 @@
 enum HttpCode {
     Ok = 200,
     BadRequest = 400,
-    Unauhtorized = 401,
+    Unauthorized = 401,
     NotFound = 404,
     Notification = -1
 };
@@ -34,4 +34,6 @@ Response Response::Ok(T content) {
 }
 
 void to_json(nlohmann::json& json, const Response& response);
+
+void from_json(const nlohmann::json& json, Response& response);
 

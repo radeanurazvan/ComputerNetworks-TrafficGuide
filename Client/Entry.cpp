@@ -1,9 +1,8 @@
 #include "stdio.h"
-#include "Client.h"
+#include "App/TrafficGuideClient.h"
 
 int main() {
-    auto client = new Client();
-    client->Connect("127.0.0.1", 8080);
+    TrafficGuideClient::Run();
 
     return 0;
 }
