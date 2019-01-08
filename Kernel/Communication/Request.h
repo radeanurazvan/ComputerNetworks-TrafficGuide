@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../3rdParties/json/single_include/nlohmann/json.hpp"
+#include "Kernel/3rdParties/json/json.hpp"
 
 class Request {
     private:

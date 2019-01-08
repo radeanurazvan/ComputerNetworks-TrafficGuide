@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Kernel/3rdParties/json/single_include/nlohmann/json.hpp"
+#include "Kernel/3rdParties/json/json.hpp"
 
 #include "Server/Resources/Common/ResourceRequest.h"
 

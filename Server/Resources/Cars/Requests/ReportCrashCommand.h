@@ -2,7 +2,7 @@
 
 #include "string"
 #include "Server/Resources/Common/ResourceRequest.h"
-#include "Kernel/3rdParties/json/single_include/nlohmann/json.hpp"
+#include "Kernel/3rdParties/json/json.hpp"
 
 class ReportCrashCommand : public ResourceRequest {
     public:

@@ -1,5 +1,5 @@
 #include "JsonHelper.h"
-#include "../3rdParties/json/single_include/nlohmann/json.hpp"
+#include "Kernel/3rdParties/json/json.hpp"
 
 bool JsonHelper::IsValidJson(std::string text)
 {
