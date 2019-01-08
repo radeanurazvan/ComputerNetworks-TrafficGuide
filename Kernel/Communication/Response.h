@@ -1,7 +1,7 @@
 #pragma once
 #include "string.h"
 #include "../Helpers/JsonHelper.h"
-#include "Kernel/3rdParties/json/json.hpp"
+#include "Kernel/3rdParties/json.hpp"
 
 enum HttpCode {
     Ok = 200,

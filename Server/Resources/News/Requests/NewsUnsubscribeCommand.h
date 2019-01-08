@@ -3,7 +3,7 @@
 #include <string>
 #include "Server/Domain/News/NewsType.h"
 #include "Server/Resources/Common/ResourceRequest.h"
-#include "Kernel/3rdParties/json/json.hpp"
+#include "Kernel/3rdParties/json.hpp"
 
 class NewsUnsubscribeCommand : public ResourceRequest {
     public:

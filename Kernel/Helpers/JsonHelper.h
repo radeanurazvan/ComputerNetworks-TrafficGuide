@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Kernel/3rdParties/json/json.hpp"
+#include "Kernel/3rdParties/json.hpp"
 
 class JsonHelper
 {
