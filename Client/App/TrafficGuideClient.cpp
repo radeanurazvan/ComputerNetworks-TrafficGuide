@@ -21,8 +21,11 @@ void TrafficGuideClient::Run() {
             printf("[client] Created connected client\n");
             connectedClient->OnTokenAcquired([connectedClient](std::string token) {
                 auto car = Car::Random(token);
-                TrafficGuideClient::currentCar = car;
                 printf("[client] Car connected. Id: %s, Position: %d, Speed: %g\n\n", car->GetId().c_str(), car->GetPosition(), car->GetSpeed());
+
+                TrafficGuideClient::currentCar = car;
+                auto command = UpdateCarCommandContract { car->GetId() , car->GetPosition(), car->GetSpeed()};
+                connectedClient->WriteRequest<UpdateCarCommandContract>("cars/update", command);
                 TrafficGuideClient::SetupJobs(car, connectedClient);
             });
             connectedClient->WithCommandContract<NewsSubscribeCommandContract>("news/subscribe", [](ClientInput* input) {
