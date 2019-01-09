@@ -1,8 +1,8 @@
 #include "time.h"
 #include "NewsJobs.h"
 
-#include "Server/Jobs/Seconds.h"
-#include "Server/Jobs/RecurrentJobs.h"
+#include "Kernel/Jobs/Seconds.h"
+#include "Kernel/Jobs/RecurrentJobs.h"
 #include "Server/Infrastructure/Server.h"
 #include "Server/Infrastructure/Persistence/NewsRepository.h"
 #include "Server/Infrastructure/Persistence/CarRepository.h"
