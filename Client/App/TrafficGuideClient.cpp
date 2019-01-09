@@ -5,6 +5,8 @@
 #include "../Domain/Car.h"
 #include "../Contracts/UpdateCarCommandContract.h"
 #include "../Contracts/NewsSubscribeCommandContract.h"
+#include "../Contracts/NewsUnsubscribeCommandContract.h"
+#include "../Contracts/ReportCrashCommandContract.h"
 
 #include "TrafficGuideClient.h"
 
@@ -17,19 +19,26 @@ void TrafficGuideClient::Run() {
         ->OnSuccess([](auto socket) {
             auto connectedClient = new ConnectedClient(socket);
             printf("[client] Created connected client\n");
-            connectedClient = connectedClient
-                ->OnTokenAcquired([connectedClient](std::string token) {
-                    auto car = Car::Random(token);
-                    TrafficGuideClient::currentCar = car;
-                    printf("[client] Car connected. Id: %s, Position: %d, Speed: %g\n\n", car->GetId().c_str(), car->GetPosition(), car->GetSpeed());
-                    TrafficGuideClient::SetupJobs(car, connectedClient);
-                });
+            connectedClient->OnTokenAcquired([connectedClient](std::string token) {
+                auto car = Car::Random(token);
+                TrafficGuideClient::currentCar = car;
+                printf("[client] Car connected. Id: %s, Position: %d, Speed: %g\n\n", car->GetId().c_str(), car->GetPosition(), car->GetSpeed());
+                TrafficGuideClient::SetupJobs(car, connectedClient);
+            });
             connectedClient->WithCommandContract<NewsSubscribeCommandContract>("news/subscribe", [](ClientInput* input) {
-                    auto params = input->GetParameters();
-                    auto newsType = atoi(params["type"].c_str());
-                    return NewsSubscribeCommandContract { TrafficGuideClient::currentCar->GetId(), newsType };
-                })
-                ->Run();
+                auto params = input->GetParameters();
+                auto newsType = atoi(params["type"].c_str());
+                return NewsSubscribeCommandContract { TrafficGuideClient::currentCar->GetId(), newsType };
+            });
+            connectedClient->WithCommandContract<NewsUnsubscribeCommandContract>("news/unsubscribe", [](ClientInput* input) {
+                auto params = input->GetParameters();
+                auto newsType = atoi(params["type"].c_str());
+                return NewsUnsubscribeCommandContract { TrafficGuideClient::currentCar->GetId(), newsType };
+            });
+            connectedClient->WithCommandContract<ReportCrashCommandContract>("cars/reportCrash", [](ClientInput* input) {
+                return ReportCrashCommandContract { TrafficGuideClient::currentCar->GetId() };
+            });
+            connectedClient->Run();
         })
         ->OnFail([]() {
             printf("[client] Could not connect to server\n");

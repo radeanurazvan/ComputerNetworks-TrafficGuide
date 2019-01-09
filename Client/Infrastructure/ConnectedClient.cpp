@@ -9,15 +9,26 @@ ConnectedClient::ConnectedClient(int socket) {
 }
 
 GenericResult<Response>* ConnectedClient::ReadResponse() {
-    char serverResponse[255];
-    bzero(serverResponse, sizeof(serverResponse));
-    if (read(this->socket, serverResponse, 255) <= 0)
-    {
-        return GenericResult<Response>::Fail("Cannot read from server");
+    std::string serverResponse = "";
+
+    char responseChar[1];
+    bzero(responseChar, sizeof(responseChar));
+    int readBytes;
+    while((readBytes = read(this->socket, &responseChar, 1)) >= 0) {
+        serverResponse += std::string(responseChar);
+        auto hasStartOfFile = serverResponse.find("<SOF>") != -1;
+        auto hasEndOfFile = serverResponse.find("<EOF>") != -1;
+
+        if(hasStartOfFile && hasEndOfFile) {
+            serverResponse.erase(0, 5);
+            serverResponse.erase(serverResponse.size() - 5, 5);
+
+            auto response = JsonHelper::Parse<Response>(std::string(serverResponse));
+            return GenericResult<Response>::Ok(response);
+        }
     }
 
-    auto response = JsonHelper::Parse<Response>(std::string(serverResponse));
-    return GenericResult<Response>::Ok(response);
+    return GenericResult<Response>::Fail("Cannot read from server");
 }
 
 ConnectedClient* ConnectedClient::OnTokenAcquired(std::function<void(std::string)> onTokenAcquired) {
@@ -60,8 +71,8 @@ void ConnectedClient::ListenForMessages() {
 void ConnectedClient::ListenForCommands() {
     auto commandsThread = std::thread([this]() {
         while(true) {
-            char commandInput[255];
-            std::cin.getline(commandInput, 255);
+            char commandInput[1000];
+            std::cin.getline(commandInput, 1000);
 
             auto clientInputResult = ClientInput::Create(std::string(commandInput));
             clientInputResult

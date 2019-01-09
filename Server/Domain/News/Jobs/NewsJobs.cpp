@@ -25,5 +25,5 @@ void NewsJobs::Setup() {
                 }
             }
         }
-    }, Seconds::FromMinutes(5));
+    }, Seconds::FromMinutes(2));
 }

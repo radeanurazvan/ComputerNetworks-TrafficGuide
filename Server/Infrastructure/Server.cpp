@@ -94,7 +94,9 @@ GenericResult<Request>* Server::ReadFromClient(int clientSocket) {
 
 Result* Server::WriteToClient(int clientSocket, Response message) {
     auto serializedMessage = JsonHelper::Serialize<Response>(message);
-    auto writtenBytes = write(clientSocket, serializedMessage.c_str(), serializedMessage.size());
+
+    auto wrappedMessage = "<SOF>" + serializedMessage + "<EOF>";
+    auto writtenBytes = write(clientSocket, wrappedMessage.c_str(), wrappedMessage.size());
 
     if(writtenBytes < 0) {
         return Result::Fail("Unreachable socket");

@@ -6,6 +6,7 @@ g++ -g -I ../ -pthread -fpermissive      \
     ../Kernel/Identity/*                 \
     ../Kernel/Communication/*            \
     ../Kernel/Helpers/*                  \
+    ../Kernel/Jobs/*                     \
     App/*                                \
     Domain/Car/EventHandlers/*           \
     Domain/Car/Events/*                  \
@@ -16,7 +17,6 @@ g++ -g -I ../ -pthread -fpermissive      \
     Events/*                             \
     Infrastructure/Persistence/*         \
     Infrastructure/*.cpp                 \
-    Jobs/*                               \
     Middlewares/*                        \
     Pipeline/*                           \
     Resources/Cars/Requests/*            \

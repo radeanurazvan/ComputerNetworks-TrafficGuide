@@ -10,7 +10,7 @@ void CarCrashReportedEventHandler::Handle(CarCrashReportedEvent* event) {
     });
 
     auto streetOrNothing = WorldMap::StreetAt(crash->GetPosition());
-    streetOrNothing->OnSuccess([&](WorldStreet* street) {
+    streetOrNothing->OnSuccess([this, cars, crash](WorldStreet* street) {
         for(auto car: cars) {
             auto notification = this->GetNotificationMessage(car, crash, street);            
 

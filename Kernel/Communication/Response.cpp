@@ -39,7 +39,7 @@ void to_json(nlohmann::json& j, const Response& response) {
 }
 
 void from_json(const nlohmann::json& json, Response& response) {
-    auto code = json.at("code").get<HttpCode>();
+    auto code = json.at("code").get<int>();
     auto body = json.at("body").get<std::string>();
 
     response = Response::Custom(body, code);     
